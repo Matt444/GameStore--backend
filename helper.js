@@ -1,15 +1,18 @@
-function getOffset(currentPage = 1, listPerPage) {
-    return (currentPage - 1) * [listPerPage];
-}
+const mysql = require("mysql2/promise");
 
-function emptyOrRows(rows) {
-    if (!rows) {
-        return [];
-    }
-    return rows;
-}
+const setIfExists = (paramName, paramValue) => {
+    return paramValue ? `${paramName}=${mysql.escape(paramValue)} ` : undefined;
+};
+
+const setExisting = (paramsTable, paramsValues) => {
+    let arr = [];
+    paramsValues.map((v, index) => {
+        const res = setIfExists(paramsTable[index], v);
+        if (res) arr = [...arr, res];
+    });
+    return arr;
+};
 
 module.exports = {
-    getOffset,
-    emptyOrRows,
+    setExisting,
 };
