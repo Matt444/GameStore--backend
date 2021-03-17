@@ -21,7 +21,7 @@ const users = require("../services/users");
  *           id:
  *             type: integer
  *             description: The auto-generated id of the user.
- *           name:
+ *           username:
  *             type: string
  *             description: The login of the user.
  *           email:
@@ -34,7 +34,7 @@ const users = require("../services/users");
  *              type: string
  *              description: The password of the user
  *         example:
- *            name: admin
+ *            username: admin
  *            email: admin@gmail.com
  *            role: admin
  *            password: "12345678"
@@ -94,10 +94,7 @@ router.get("/", auth.passIfAdmin(), async (req, res, next) => {
  *      responses:
  *          "201":
  *              description: User was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/User'
+ *
  *          "400":
  *              description: Incorrect request body
  *
@@ -218,7 +215,7 @@ router.patch(
  *                  example:
  *                    name: admin
  *                    email: admin@gmail.com
- *                    example: admin
+ *                    role: admin
  *                    password: secretpassword
  *      parameters:
  *          - in: path

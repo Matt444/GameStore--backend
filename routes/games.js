@@ -47,6 +47,9 @@ const games = require("../services/games");
  *           age_category:
  *             type: string
  *             description: The age category of the game i PEGI rating system - PEGI(3,7,12,16,18).
+ *           image_url:
+ *             type: string
+ *             description: The url to the image.
  *           platform_id:
  *             type: integer
  *             description: The id of the category
@@ -61,6 +64,7 @@ const games = require("../services/games");
  *            release_date: 2021-03-11T23:06:06.000Z
  *            is_digital: 0
  *            age_category: PEGI18
+ *            image_url: https://...
  *            platform_id: 5
  *            categories_id: [1, 4, 8]
  */
@@ -97,9 +101,55 @@ const games = require("../services/games");
  *              content:
  *                  application/json:
  *                      schema:
- *                          type: array
- *                          items:
- *                              $ref: '#/components/schemas/Game'
+ *                        type: object
+ *                        properties:
+ *                          totalGamesNumber:
+ *                              type: number
+ *                              description: Total games number.
+ *                              example: 20
+ *                          games:
+ *                            type: array
+ *                            items:
+ *                              properties:
+ *                                  name:
+ *                                     type: string
+ *                                     description: The name of the game.
+ *                                  is_digital:
+ *                                     type: number
+ *                                     description: The type of the game - 0 box type, 1 digital type.
+ *                                  age_categories:
+ *                                     type: string
+ *                                     description: The age category of the game in PEGI rating system - PEGI(3,7,12,16,18).
+ *                                  image_url:
+ *                                     type: string
+ *                                     description: The url to the image.
+ *                                  platform:
+ *                                     type: object
+ *                                     description: The platform.
+ *                                     properties:
+ *                                       id:
+ *                                         type: number
+ *                                         description: The id of the platform.
+ *                                       name:
+ *                                          type: string
+ *                                          description: The name of the platform.
+ *                                  categories_id:
+ *                                     type: array
+ *                                     description: The array of categories.
+ *                                     items:
+ *                                       id:
+ *                                         type: number
+ *                                         description: The id of the category.
+ *                                       name:
+ *                                         type: string
+ *                                         description: The name of the category.
+ *                              example:
+ *                                name: Cyber
+ *                                is_digital: 1
+ *                                age_categories: ["PEGI18"]
+ *                                image_url: https://...
+ *                                platform: { id: 1, name: PC}
+ *                                categories_id: [{id: 1, name: Action}, {id: 4, name: RPG}]
  *          500:
  *              description: Some server error.
  */
@@ -110,6 +160,77 @@ router.get("/", async function (req, res, next) {
     } catch (err) {
         console.error(`Error while getting games `, err.message);
         next(err);
+    }
+});
+
+/**
+ * @swagger
+ * /games/{id}:
+ *  get:
+ *      tags: [Games]
+ *      summary: Returns the game by id
+ *      parameters:
+ *         - in: path
+ *           name: id
+ *           type: integer
+ *           description: The id of the game.
+ *      responses:
+ *          200:
+ *              description: The game was succesfully fetched.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                           name:
+ *                             type: string
+ *                             description: The name of the game.
+ *                           is_digital:
+ *                             type: number
+ *                             description: The type of the game - 0 box type, 1 digital type.
+ *                           age_categories:
+ *                             type: string
+ *                             description: The age category of the game in PEGI rating system - PEGI(3,7,12,16,18).
+ *                           image_url:
+ *                             type: string
+ *                             description: The url to the image.
+ *                           platform:
+ *                             type: object
+ *                             description: The platform.
+ *                             properties:
+ *                               id:
+ *                                   type: number
+ *                                   description: The id of the platform.
+ *                               name::
+ *                                   type: string
+ *                                   description: The name of the platform.
+ *                           categories_id:
+ *                             type: array
+ *                             description: The array of categories.
+ *                             items:
+ *                               id:
+ *                                 type: number
+ *                                 description: The id of the category.
+ *                               name:
+ *                                  type: string
+ *                                  description: The name of the category.
+ *                        example:
+ *                           name: Cyber
+ *                           is_digital: 1
+ *                           age_categories: ["PEGI18"]
+ *                           image_url: https://...
+ *                           platform: { id: 1, name: PC}
+ *                           categories_id: [{id: 1, name: Action}, {id: 4, name: RPG}]
+ *          500:
+ *              description: Some server error.
+ */
+
+router.get("/:id", async (req, res, next) => {
+    try {
+        res.status(200).send(await games.getOne(req.params.id));
+    } catch (err) {
+        console.error(`Error while getting game`, err.message);
+        next();
     }
 });
 
@@ -130,10 +251,7 @@ router.get("/", async function (req, res, next) {
  *      responses:
  *          "201":
  *              description: Game was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Game'
+ *
  *          "400":
  *              description: Incorrect request body
  *
@@ -217,7 +335,55 @@ router.post(
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/Game'
+ *                        type: object
+ *                        properties:
+ *                          totalGamesNumber:
+ *                              type: number
+ *                              description: Total games number.
+ *                              example: 20
+ *                          games:
+ *                            type: array
+ *                            items:
+ *                              properties:
+ *                                  name:
+ *                                     type: string
+ *                                     description: The name of the game.
+ *                                  is_digital:
+ *                                     type: number
+ *                                     description: The type of the game - 0 box type, 1 digital type.
+ *                                  age_categories:
+ *                                     type: string
+ *                                     description: The age category of the game in PEGI rating system - PEGI(3,7,12,16,18).
+ *                                  image_url:
+ *                                     type: string
+ *                                     description: The url to the image.
+ *                                  platform:
+ *                                     type: object
+ *                                     description: The platform.
+ *                                     properties:
+ *                                       id:
+ *                                         type: number
+ *                                         description: The id of the platform.
+ *                                       name:
+ *                                          type: string
+ *                                          description: The name of the platform.
+ *                                  categories_id:
+ *                                     type: array
+ *                                     description: The array of categories.
+ *                                     items:
+ *                                       id:
+ *                                         type: number
+ *                                         description: The id of the category.
+ *                                       name:
+ *                                         type: string
+ *                                         description: The name of the category.
+ *                              example:
+ *                                name: Cyber
+ *                                is_digital: 1
+ *                                age_categories: ["PEGI18"]
+ *                                image_url: https://...
+ *                                platform: { id: 1, name: PC}
+ *                                categories_id: [{id: 1, name: Action}, {id: 4, name: RPG}]
  *          "400":
  *              description: Incorrect request body
  *

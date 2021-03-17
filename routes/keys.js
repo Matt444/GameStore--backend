@@ -86,14 +86,25 @@ router.get("/", auth.passIfAdmin(), async (req, res, next) => {
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/Key'
+ *                      type: object
+ *                      properties:
+ *                          game_id:
+ *                              type: number
+ *                              description: The id of the game.
+ *                          gkey:
+ *                              type: string
+ *                              description: The key.
+ *                          price:
+ *                              type: number
+ *                              description: The pirce of the game.
+ *                      example:
+ *                          game_id: 1
+ *                          gkey: "68IC5-8Q4K5-EJ853"
+ *                          price: 100
  *      responses:
  *          "201":
  *              description: Key was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Key'
+ *
  *          "400":
  *              description: Incorrect request body
  *
@@ -113,7 +124,7 @@ router.post(
     validateReq(schemas.keyPOST, "body"),
     async (req, res, next) => {
         try {
-            res.json(await keys.create(req.body)).status(201);
+            res.status(201).json(await keys.create(req.body));
         } catch (err) {
             if (err.code === "ER_DUP_ENTRY") {
                 res.status(409).send({ message: err.message });

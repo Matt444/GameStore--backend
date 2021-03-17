@@ -77,10 +77,6 @@ router.get("/", async function (req, res, next) {
  *      responses:
  *          "201":
  *              description: Category was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Category'
  *          "400":
  *              description: Incorrect request body
  *

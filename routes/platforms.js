@@ -77,10 +77,7 @@ router.get("/", async function (req, res, next) {
  *      responses:
  *          "201":
  *              description: Platform was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Platform'
+ *
  *          "400":
  *              description: Incorrect request body
  *
