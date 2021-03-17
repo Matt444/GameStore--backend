@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const helmet = require("helmet");
@@ -78,5 +78,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server app listening at http://localhost:${port}`);
-    console.log("API Documentation available at: /api-docs");
+    console.log(`API Documentation available at http://localhost:${port}/api-docs`);
 });
