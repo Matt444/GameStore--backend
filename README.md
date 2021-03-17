@@ -8,7 +8,7 @@ E-commerce website directed to selling games with quite complex administration s
 
 ## Getting Started
 
-> Note: Installed node.js and mysql server are required.
+> Note: Node.js and mysql server are required.
 
 Clone project, then create database using script from db/create.sql.
 
