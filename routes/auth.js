@@ -52,21 +52,7 @@ const config = require("../config");
  *      responses:
  *          "201":
  *              description: User was successfully created.
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                      properties:
- *                          username:
- *                              type: string
- *                          email:
- *                              type: string
- *                          password:
- *                              type: string
- *                      example:
- *                          username: admin
- *                          email: admin@gmail.com
- *                          password: secretpassword
+
  *          "400":
  *              description: Incorrect request body
  *
@@ -80,12 +66,12 @@ const config = require("../config");
 router.post("/register", async (req, res, next) => {
     try {
         const user = {
-            name: req.body.username,
+            username: req.body.username,
             email: req.body.email,
             role: "user",
             password: req.body.password,
         };
-
+        console.log(user);
         res.status(201).json(await users.create(user));
     } catch (err) {
         if (err.code === "ER_DUP_ENTRY") {
@@ -128,18 +114,7 @@ router.post("/register", async (req, res, next) => {
  *      responses:
  *          "200":
  *              description: User was successfully loggedin.
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              username:
- *                                  type: string
- *                              password:
- *                                  type: string
- *                          example:
- *                              username: admin
- *                              password: secretpassword
+
  *          "400":
  *              description: Incorrect request body
  *
