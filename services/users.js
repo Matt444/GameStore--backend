@@ -4,7 +4,7 @@ const config = require("../config");
 const bcrypt = require("bcryptjs");
 
 async function getMultiple() {
-    const data = await db.query("SELECT id, name, email, role FROM users", []);
+    const data = await db.query("SELECT id, name AS username, email, role FROM users", []);
 
     return data;
 }
@@ -29,7 +29,7 @@ async function create(user) {
 
     const result = await db.query(
         `INSERT INTO users (name, email, role, password_hash, salt) VALUES (?,?,?,?,?)`,
-        [user.name, user.email, user.role, user.password_hash, user.salt]
+        [user.username, user.email, user.role, user.password_hash, user.salt]
     );
 
     let message = "Error in creating user";
@@ -49,7 +49,7 @@ async function updateChosen(id, user) {
     const result = await db.query(
         `UPDATE users SET ${helper.setExisting(
             ["name", "email", "role", "password_hash", "salt"],
-            [user.name, user.email, user.role, user.password_hash, user.salt]
+            [user.username, user.email, user.role, user.password_hash, user.salt]
         )} WHERE id=?`,
         [id]
     );

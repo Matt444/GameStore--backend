@@ -4,16 +4,19 @@ const config = require("../config");
 const { func } = require("joi");
 
 async function getMultiple() {
-    const data = await db.query(`SELECT id, game_id, used, gkey FROM games_keys`, []);
+    const data = await db.query(
+        `SELECT gk.id, (SELECT JSON_OBJECT('id',g.id,'name', g.name, 'price',g.price) FROM games g WHERE g.id=gk.game_id) AS game, gk.used, gk.gkey FROM games_keys gk ORDER BY gk.game_id`,
+        []
+    );
 
     return data;
 }
 
 async function create(key) {
-    const result = await db.query(
-        `INSERT INTO games_keys (game_id, used, gkey) VALUES game_id=?, used=?, gkey=?`,
-        [key.game_id, "0", key.gkey]
-    );
+    const result = await db.query(`INSERT INTO games_keys (game_id, used, gkey) VALUES (?, 0, ?)`, [
+        key.game_id,
+        key.gkey,
+    ]);
 
     let message = "Error in creating key";
 

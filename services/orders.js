@@ -7,7 +7,7 @@ const config = require("../config");
 async function getMultiple() {
     const result = await db.query(
         `SELECT ut.id, ut.user_id, date, JSON_ARRAYAGG(game_id) as games FROM users_transactions ut, games_transactions gt 
-            WHERE ut.id=gt.user_transaction_id GROUP BY ut.id;`,
+            WHERE ut.id=gt.user_transaction_id GROUP BY ut.id ORDER BY ut.id DESC;`,
         []
     );
 
@@ -34,7 +34,7 @@ async function getMultiple() {
 async function getOne(userId) {
     const result = await db.query(
         `SELECT ut.id, date, JSON_ARRAYAGG(game_id) as games FROM users_transactions ut, games_transactions gt 
-            WHERE ut.id=gt.user_transaction_id AND ut.user_id=? GROUP BY ut.id;`,
+            WHERE ut.id=gt.user_transaction_id AND ut.user_id=? GROUP BY ut.id ORDER BY ut.id DESC;`,
         [userId]
     );
 
@@ -65,27 +65,40 @@ async function create(userId, order) {
 
     await Promise.all(
         order.map(async (ord) => {
-            const { game_id } = ord;
+            const { game_id, quantity } = ord;
+
             const res = await db.query(`SELECT is_digital, quantity FROM games WHERE id=?`, [
                 game_id,
             ]);
 
+            if (res[0].is_digital === 0 && res[0].quantity < quantity) {
+                const error = new Error("Not enough box games");
+                throw error;
+            }
+
+            let keys = [];
+            if (res[0].is_digital) {
+                keys = await db.query("SELECT id FROM games_keys WHERE game_id=? AND used=0;", [
+                    game_id,
+                ]);
+                if (keys.length < quantity) {
+                    const error = new Error("Not enough keys");
+                    throw error;
+                }
+            }
+
             for (i = 0; i < ord.quantity; i++) {
                 queries = [
                     ...queries,
-                    `INSERT INTO games_transactions (user_transaction_id, game_id, key_id) VALUES 
-            ((SELECT MAX(ut.id) FROM users_transactions ut),?,( IF(
-                (?), (SELECT gk.id FROM games_keys gk WHERE gk.game_id=? AND used=0 LIMIT 1), NULL
-            ) ) )`,
+                    `INSERT INTO games_transactions (user_transaction_id, game_id, key_id) VALUES
+            ((SELECT MAX(ut.id) FROM users_transactions ut),?,?)`,
                 ];
-                queryValues = [...queryValues, [game_id, res.is_digital, game_id, game_id]];
+                queryValues = [...queryValues, [game_id, res[0].is_digital ? keys[i].id : null]];
             }
         })
     );
 
     const result = await db.transaction(queries, queryValues);
-
-    console.log(result);
 
     let message = "Order was created succesfully";
 
