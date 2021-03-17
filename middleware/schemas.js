@@ -8,13 +8,13 @@ const schemas = {
         name: Joi.string().min(1).max(45).required(),
     }),
     userPOST: Joi.object().keys({
-        name: Joi.string().min(1).max(15).required(),
+        username: Joi.string().min(1).max(15).required(),
         email: Joi.string().email().required(),
         role: Joi.string().min(1).max(10).required(),
         password: Joi.string().min(6).max(20).required(),
     }),
     userPATCH: Joi.object().keys({
-        name: Joi.string().min(1).max(15),
+        username: Joi.string().min(1).max(15),
         email: Joi.string().email(),
         role: Joi.string().min(1).max(10),
         password: Joi.string().min(6).max(20),
@@ -26,7 +26,6 @@ const schemas = {
     }),
     keyPOST: Joi.object().keys({
         game_id: Joi.number().required(),
-        used: Joi.string().valid("0"),
         gkey: Joi.string().required(),
     }),
     gamePOST: Joi.object().keys({
@@ -39,6 +38,7 @@ const schemas = {
         age_category: Joi.string().required(),
         platform_id: Joi.number().required(),
         categories_id: Joi.array().required(),
+        image_url: Joi.string().max(150).required(),
     }),
     gamePOST_SEARCH: Joi.object().keys({
         name: Joi.string().allow("").max(45),
@@ -57,6 +57,7 @@ const schemas = {
         age_category: Joi.string(),
         platform_id: Joi.number(),
         categories_id: Joi.array(),
+        image_url: Joi.string().max(150),
     }),
     authRegisterPOST: Joi.object().keys({
         username: Joi.string().min(1).max(15).required(),
