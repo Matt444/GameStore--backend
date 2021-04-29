@@ -1,4 +1,5 @@
 # GameStore.
+> NOTE: Currently hosted on Google Cloud: https://gamestore-api.appspot.com/api-docs/
 
 E-commerce website directed to selling games with quite complex administration system. 
 
